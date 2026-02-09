@@ -1,0 +1,45 @@
+{
+  "name": "vector-index",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "filterable": true
+    },
+    {
+      "name": "content",
+      "type": "Edm.String",
+      "searchable": true
+    },
+    {
+      "name": "contentVector",
+      "type": "Collection(Edm.Single)",
+      "dimensions": 1536,
+      "vectorSearchProfile": "vec"
+    },
+    {
+      "name": "location",
+      "type": "Edm.String",
+      "filterable": true,
+      "searchable": false
+    }
+  ],
+  "vectorSearch": {
+    "profiles": [
+      {
+        "name": "vec",
+        "algorithm": "hnsw-config"
+      }
+    ],
+    "algorithms": [
+      {
+        "name": "hnsw-config",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine"
+        }
+      }
+    ]
+  }
+}
