@@ -17,12 +17,12 @@ A Python-based Model Context Protocol (MCP) server that integrates Azure AI Sear
 
 - Python 3.11 or higher
 - Azure AI Search Service
-- Azure AD credentials or API key
+- API keys (see `.env.example`)
 
 ### From Source
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/anassgallass/AI-for-Research---Dev-productivity.git
 cd mcp-server
 pip install -e .
 ```
