@@ -1,18 +1,18 @@
 {
-    "mcpServers": {
-        "azure-ai-search": {
-            "command": "uv",
-            "args": [
-                "run",
-                "--env-file",
-                "../.env",
-                "mcp",
-                "run",
-                "main.py"
-            ],
-            "cwd": "${workspaceFolder}/mcp-server",
-            "disabled": false,
-            "alwaysAllow": []
-        }
-    }
+	"servers": {
+		"azure-ai-search": {
+			"type": "stdio",
+			"command": "uv",
+			"args": [
+				"run",
+				"--env-file",
+				".env",
+				"mcp",
+				"run",
+				"azure-ai-search-mcp/main.py"
+			],
+            "cwd": "${workspaceFolder}"
+		}
+	},
+	"inputs": []
 }
