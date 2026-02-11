@@ -12,7 +12,6 @@ from typing import Any
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
-# Import your existing tool logic
 from tools import (
     semantic_search as tool_semantic_search,
     hybrid_search as tool_hybrid_search,
