@@ -58,36 +58,56 @@ Optional for enhanced semantic search:
 
 ### Run the Server
 
+You can run the server using the provided scripts or directly with uv.
+
+**Option A: Use the scripts**
+
+```powershell
+# Dev server
+./scripts/dev_server.ps1
+
+# Prod server
+./scripts/prod_server.ps1
+```
+
+**Option B: Run directly with uv**
+
 ```bash
-uv run main.py
+# Dev mode
+uv run mcp dev main.py
+
+# Prod mode
+uv run mcp run main.py
 ```
 
 The server will listen on stdio and communicate via the Model Context Protocol.
 
-### With VSCode
+### GitHub Copilot MCP setup
 
-Add to your VSCode configuration:
-
-**Config file**: `.vscode/mcp.json`
+To use this server with GitHub Copilot in VS Code, add the following to your `.vscode/mcp.json` configuration in the workspace root:
 
 ```json
 {
-    "mcpServers": {
-        "azure-ai-search": {
-            "command": "uv",
-            "args": [
-                "run",
-                "--env-file",
-                "../.env",
-                "mcp",
-                "run",
-                "main.py"
-            ],
-            "cwd": "${workspaceFolder}/azure-ai-search-mcp"
-        }
-    }
+	"servers": {
+		"azure-ai-search": {
+			"type": "stdio",
+			"command": "uv",
+			"args": [
+				"run",
+				"--env-file",
+				".env",
+				"mcp",
+				"run",
+				"azure-ai-search-mcp/main.py"
+			],
+            "cwd": "${workspaceFolder}"
+		}
+	},
+	"inputs": []
 }
 ```
+
+After updating the configuration, reload VS Code or the window so GitHub Copilot picks up the MCP server.
 
 Ensure the `.vscode` directory exists in your workspace root.
 
@@ -235,3 +255,10 @@ azure-ai-search-mcp/
 - [Azure AI Search Documentation](https://docs.microsoft.com/azure/search/)
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 - [Azure SDK for Python](https://docs.microsoft.com/python/azure/)
+
+
+## Credits
+
+[Aryan Shah (SE Intern)](https://github.com/aryxenv): MCP Server Setup + Documentation
+[Anass Gallass (SSP Intern)](https://github.com/anassgallass): Github MCP setup & integration
+[Bertille Mathieu (SE Intern)](https://github.com/bertillessec): OpenWebUI MCP setup & integration
