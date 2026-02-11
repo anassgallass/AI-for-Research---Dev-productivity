@@ -15,6 +15,7 @@ A Python-based Model Context Protocol (MCP) server that integrates Azure AI Sear
 
 ### Prerequisites
 
+- uv
 - Python 3.11 or higher
 - Azure AI Search Service
 - API keys (see `.env.example`)
@@ -24,14 +25,14 @@ A Python-based Model Context Protocol (MCP) server that integrates Azure AI Sear
 ```bash
 git clone https://github.com/anassgallass/AI-for-Research---Dev-productivity.git
 cd mcp-server
-pip install -e .
+uv sync
 ```
 
 ## Configuration
 
 ### Environment Variables
 
-Create a `.env` file in your project root or set these environment variables:
+Create a `.env` file in your workspace root (parent of `mcp-server` directory) with these variables:
 
 ```env
 AZURE_SEARCH_ENDPOINT=https://your-search-service.search.windows.net
@@ -58,29 +59,30 @@ Optional for enhanced semantic search:
 ### Run the Server
 
 ```bash
-python main.py
+uv run main.py
 ```
 
 The server will listen on stdio and communicate via the Model Context Protocol.
 
 ### With VSCode
 
-Add to your VSCode settings or workspace configuration:
+Add to your VSCode configuration:
 
-**Settings file**: `.vscode/settings.json`
+**Config file**: `.vscode/mcp.json`
 
 ```json
 {
     "mcpServers": {
         "azure-ai-search": {
-            "command": "python",
-            "args": ["-u", "${workspaceFolder}/mcp-server/main.py"],
-            "env": {
-                "AZURE_SEARCH_ENDPOINT": "https://your-search-service.search.windows.net",
-                "AZURE_SEARCH_API_KEY": "your-api-key-here",
-                "AZURE_SEARCH_INDEX_NAME": "your-index-name",
-                "AZURE_SEARCH_EXCLUDE_FIELDS": "content,content_vector"
-            },
+            "command": "uv",
+            "args": [
+                "run",
+                "--env-file",
+                "../.env",
+                "mcp",
+                "run",
+                "main.py"
+            ],
             "cwd": "${workspaceFolder}/mcp-server"
         }
     }
