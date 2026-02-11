@@ -1,3 +1,3 @@
 Set-Location -Path $PSScriptRoot
 
-uv run --env-file ../../.env mcp dev ../main.py
+uv run --env-file ../.env mcp dev main.py
