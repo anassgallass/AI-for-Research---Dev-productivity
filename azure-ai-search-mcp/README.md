@@ -259,6 +259,6 @@ azure-ai-search-mcp/
 
 ## Credits
 
-[Aryan Shah (SE Intern)](https://github.com/aryxenv): MCP Server Setup + Documentation
-[Anass Gallass (SSP Intern)](https://github.com/anassgallass): Github MCP setup & integration
-[Bertille Mathieu (SE Intern)](https://github.com/bertillessec): OpenWebUI MCP setup & integration
+- [Aryan Shah (SE Intern)](https://github.com/aryxenv): MCP Server Setup + Documentation
+- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Github MCP setup & integration
+- [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): OpenWebUI MCP setup & integration
