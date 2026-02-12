@@ -12,7 +12,7 @@ Use internal knowledge sources with AI agents using MCP with Azure.
 ## Pipeline
 
 ### Setup
-1. Copy [`.env.example`](./env.example) and paste it in the same directory.
+1. Copy [`.env.example`](./.env.example) and paste it in the same directory.
 2. Rename the **copied** `.env.example` to `.env`
 3. Open [Azure Portal](portal.azure.com)
 3. Create Azure RG called `ai_for_research`
