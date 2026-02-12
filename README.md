@@ -14,7 +14,7 @@ Use internal knowledge sources with AI agents using MCP with Azure.
 ### Setup
 1. Copy [`.env.example`](./.env.example) and paste it in the same directory.
 2. Rename the **copied** `.env.example` to `.env`
-3. Open [Azure Portal](portal.azure.com)
+3. Open [Azure Portal](https://portal.azure.com)
 3. Create Azure RG called `ai_for_research`
 
 ### Azure AI Search
@@ -37,7 +37,7 @@ Use internal knowledge sources with AI agents using MCP with Azure.
 
 ### Azure AI Foundry
 
-1. Go to [Azure AI Foundry](ai.azure.com)
+1. Go to [Azure AI Foundry](https://ai.azure.com)
 2. Toggle `New Foundry`
 3. Create a project called `ai-for-research-foundry` under resource group `ai_for_research`, ideally in `swedencentral`
 4. Copy the `Project API Key`
