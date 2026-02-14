@@ -20,7 +20,7 @@ import sys
 from typing import Any
 
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp import FastMCP # type: ignore
 
 from tools import (
     semantic_search as tool_semantic_search,
