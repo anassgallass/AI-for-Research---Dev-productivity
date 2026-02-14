@@ -3,7 +3,7 @@
 from azure_search_client import get_search_client, get_excluded_fields, format_search_results
 
 
-def text_search(query: str, top: int = 30) -> dict:
+def text_search(query: str, top: int = 5) -> dict:
     """
     Perform traditional text/keyword search using Azure AI Search.
     

@@ -3,14 +3,14 @@
 from azure_search_client import get_search_client, get_excluded_fields, format_search_results
 
 
-def hybrid_search(query: str, top: int = 30) -> dict:
+def hybrid_search(query: str, top: int = 5) -> dict:
     """
     Perform hybrid search using Azure AI Search.
     Combines full-text and vector search for balanced results.
     
     Args:
         query: The search query string
-        top: Maximum number of results to return (default: 30)
+        top: Maximum number of results to return (default: 5)
     
     Returns:
         Dictionary containing search results

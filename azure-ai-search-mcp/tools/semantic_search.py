@@ -3,7 +3,7 @@
 from azure_search_client import get_search_client, get_excluded_fields, format_search_results
 
 
-def semantic_search(query: str, top: int = 30) -> dict:
+def semantic_search(query: str, top: int = 5) -> dict:
     """
     Perform semantic search using Azure AI Search.
     

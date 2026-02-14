@@ -3,7 +3,7 @@
 from azure_search_client import get_search_client, get_excluded_fields, format_search_results
 
 
-def filtered_search(query: str, filter: str, top: int = 30) -> dict:
+def filtered_search(query: str, filter: str, top: int = 5) -> dict:
     """
     Perform filtered search using Azure AI Search with OData expressions.
     

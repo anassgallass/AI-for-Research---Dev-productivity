@@ -51,7 +51,7 @@ server = FastMCP("azure-ai-search-mcp")
 # for demo purposes, we only keep hybrid_search tool. You can uncomment the others to enable them as well.
 
 # @server.tool()
-# async def semantic_search(query: str, top: int = 30) -> str:
+# async def semantic_search(query: str, top: int = 5) -> str:
 #     """
 #     Performs AI-powered semantic search that understands context and meaning. 
 #     Works with or without semantic configuration.
@@ -60,7 +60,7 @@ server = FastMCP("azure-ai-search-mcp")
 #     return json.dumps(result)
 
 @server.tool()
-async def hybrid_search(query: str, top: int = 30) -> str:
+async def hybrid_search(query: str, top: int = 5) -> str:
     """
     Combines full-text and vector search for balanced results.
     """
@@ -68,7 +68,7 @@ async def hybrid_search(query: str, top: int = 30) -> str:
     return json.dumps(result)
 
 # @server.tool()
-# async def text_search(query: str, top: int = 30) -> str:
+# async def text_search(query: str, top: int = 5) -> str:
 #     """
 #     Traditional keyword-based text search.
 #     """
@@ -76,7 +76,7 @@ async def hybrid_search(query: str, top: int = 30) -> str:
 #     return json.dumps(result)
 
 # @server.tool()
-# async def filtered_search(query: str, filter: str, top: int = 30) -> str:
+# async def filtered_search(query: str, filter: str, top: int = 5) -> str:
 #     """
 #     Search with OData filter expressions to narrow results.
     
