@@ -48,14 +48,16 @@ if missing_vars:
 # Create FastMCP server instance
 server = FastMCP("azure-ai-search-mcp")
 
-@server.tool()
-async def semantic_search(query: str, top: int = 30) -> str:
-    """
-    Performs AI-powered semantic search that understands context and meaning. 
-    Works with or without semantic configuration.
-    """
-    result = tool_semantic_search(query=query, top=top)
-    return json.dumps(result)
+# for demo purposes, we only keep hybrid_search tool. You can uncomment the others to enable them as well.
+
+# @server.tool()
+# async def semantic_search(query: str, top: int = 30) -> str:
+#     """
+#     Performs AI-powered semantic search that understands context and meaning. 
+#     Works with or without semantic configuration.
+#     """
+#     result = tool_semantic_search(query=query, top=top)
+#     return json.dumps(result)
 
 @server.tool()
 async def hybrid_search(query: str, top: int = 30) -> str:
@@ -65,34 +67,34 @@ async def hybrid_search(query: str, top: int = 30) -> str:
     result = tool_hybrid_search(query=query, top=top)
     return json.dumps(result)
 
-@server.tool()
-async def text_search(query: str, top: int = 30) -> str:
-    """
-    Traditional keyword-based text search.
-    """
-    result = tool_text_search(query=query, top=top)
-    return json.dumps(result)
+# @server.tool()
+# async def text_search(query: str, top: int = 30) -> str:
+#     """
+#     Traditional keyword-based text search.
+#     """
+#     result = tool_text_search(query=query, top=top)
+#     return json.dumps(result)
 
-@server.tool()
-async def filtered_search(query: str, filter: str, top: int = 30) -> str:
-    """
-    Search with OData filter expressions to narrow results.
+# @server.tool()
+# async def filtered_search(query: str, filter: str, top: int = 30) -> str:
+#     """
+#     Search with OData filter expressions to narrow results.
     
-    Args:
-        query: The search query
-        filter: OData filter expression (e.g., "category eq 'AI' and year ge 2020")
-        top: Maximum results to return
-    """
-    result = tool_filtered_search(query=query, filter=filter, top=top)
-    return json.dumps(result)
+#     Args:
+#         query: The search query
+#         filter: OData filter expression (e.g., "category eq 'AI' and year ge 2020")
+#         top: Maximum results to return
+#     """
+#     result = tool_filtered_search(query=query, filter=filter, top=top)
+#     return json.dumps(result)
 
-@server.tool()
-async def fetch_document(document_id: str) -> str:
-    """
-    Retrieve a specific document by its unique ID. Returns the complete document with all fields.
-    """
-    result = tool_fetch_document(document_id=document_id)
-    return json.dumps(result)
+# @server.tool()
+# async def fetch_document(document_id: str) -> str:
+#     """
+#     Retrieve a specific document by its unique ID. Returns the complete document with all fields.
+#     """
+#     result = tool_fetch_document(document_id=document_id)
+#     return json.dumps(result)
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Azure AI Search MCP Server")
