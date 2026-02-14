@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "azure-ai-search": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "main.py",
+        "--transport",
+        "stdio"
+      ]
+    }
+  }
+}

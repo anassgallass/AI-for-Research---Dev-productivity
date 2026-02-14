@@ -10,6 +10,7 @@ A Python-based Model Context Protocol (MCP) server that integrates Azure AI Sear
 - 🔎 **Filtered Search**: Search with OData filter expressions
 - 📄 **Document Fetch**: Retrieve specific documents by ID
 - 📊 **Index Schema Resource**: Access to index field definitions and metadata
+- 🌐 **OpenWebUI Integration**: Works with OpenWebUI via mcpo proxy
 
 ## Installation
 
@@ -179,7 +180,7 @@ Performs AI-powered semantic search that understands context and meaning. Works 
 **Parameters:**
 
 - `query` (string, required): The search query
-- `top` (number, optional): Maximum results to return (default: 30)
+- `top` (number, optional): Maximum results to return (default: 5)
 
 **Example:**
 
@@ -197,14 +198,14 @@ Combines full-text and vector search for balanced results.
 **Parameters:**
 
 - `query` (string, required): The search query
-- `top` (number, optional): Maximum results to return (default: 30)
+- `top` (number, optional): Maximum results to return (default: 5)
 
 **Example:**
 
 ```json
 {
   "query": "artificial intelligence trends",
-  "top": 30
+  "top": 5
 }
 ```
 
@@ -215,14 +216,14 @@ Traditional keyword-based text search.
 **Parameters:**
 
 - `query` (string, required): The search query
-- `top` (number, optional): Maximum results to return (default: 30)
+- `top` (number, optional): Maximum results to return (default: 5)
 
 **Example:**
 
 ```json
 {
   "query": "data science",
-  "top": 30
+  "top": 5
 }
 ```
 
@@ -234,7 +235,7 @@ Search with OData filter expressions to narrow results.
 
 - `query` (string, required): The search query
 - `filter` (string, required): OData filter expression
-- `top` (number, optional): Maximum results to return (default: 30)
+- `top` (number, optional): Maximum results to return (default: 5)
 
 **Example:**
 
@@ -242,7 +243,7 @@ Search with OData filter expressions to narrow results.
 {
   "query": "technology",
   "filter": "category eq 'AI' and year ge 2020",
-  "top": 30
+  "top": 5
 }
 ```
 
@@ -278,6 +279,52 @@ You can customize which fields are excluded via the `AZURE_SEARCH_EXCLUDE_FIELDS
 - **Field Exclusion**: Use `AZURE_SEARCH_EXCLUDE_FIELDS` to prevent sensitive data from being returned in search results
 - **Data Privacy**: The `contentVector` fields are always excluded from search results by default
 
+## OpenWebUI Integration
+
+OpenWebUI doesn't support MCP's stdio transport natively. We use [`mcpo`](https://pypi.org/project/mcpo/) to bridge the MCP server to an OpenAPI endpoint that OpenWebUI can consume.
+
+### Prerequisites
+
+```bash
+pip install mcpo
+```
+
+### Run the mcpo proxy
+
+From the `azure-ai-search-mcp` directory:
+
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\openwebui.ps1                        # default port 8000, api-key "top-secret"
+.\scripts\openwebui.ps1 -Port 9000             # custom port
+.\scripts\openwebui.ps1 -ApiKey "my-secret"    # custom api key
+```
+
+**macOS / Linux:**
+
+```bash
+chmod +x scripts/openwebui.sh
+./scripts/openwebui.sh              # default port 8000, api-key "top-secret"
+./scripts/openwebui.sh 9000         # custom port
+./scripts/openwebui.sh 8000 my-key  # custom port + api key
+```
+
+### Add to OpenWebUI
+
+1. Open OpenWebUI (default: `http://localhost:8080`)
+2. Click on your profile (bottom left) → **Admin Panel**
+3. In top nav bar, click on **Settings** → **External Tools**
+4. Click the plus icon next to **Manage Tool Servers**
+5. Enter:
+   - **URL**: `http://localhost:8000/azure-ai-search`
+   - **API Key**: `top-secret` (or whatever you set when launching the script)
+6. Click **Save**
+
+The MCP tools will now be available in your OpenWebUI chats (you may need to enable them manually before submitting a prompt).
+
+> **Note:** The mcpo proxy and the GitHub Copilot stdio config are completely independent — they spawn separate processes and do not interfere with each other.
+
 ## Troubleshooting
 
 ### "Missing required environment variables"
@@ -311,9 +358,12 @@ azure-ai-search-mcp/
 ├── .env.example               # Example environment variables
 ├── .python-version            # Python version specification
 ├── azure_search_client.py      # Azure Search client utilities
+├── mcpo-config.json            # mcpo config for OpenWebUI integration
 ├── scripts/
 │   ├── dev.ps1                # Dev mode launcher (Windows)
 │   ├── dev.sh                 # Dev mode launcher (macOS/Linux)
+│   ├── openwebui.ps1          # OpenWebUI mcpo launcher (Windows)
+│   ├── openwebui.sh           # OpenWebUI mcpo launcher (macOS/Linux)
 │   ├── prod.ps1               # Prod mode launcher (Windows)
 │   └── prod.sh                # Prod mode launcher (macOS/Linux)
 ├── tools/
@@ -334,6 +384,6 @@ azure-ai-search-mcp/
 
 ## Credits
 
-- [Aryan Shah (SE Intern)](https://github.com/aryxenv): MCP Server Setup + Github Copilot MCP setup & integration + Documentation
-- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Testing AI Search & MCP
-- [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): OpenWebUI MCP setup & integration
+- [Aryan Shah (SE Intern)](https://github.com/aryxenv): MCP Server Setup + Github Copilot MCP setup & integration + OpenWebUI MCP setup & integration + Documentation
+- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Testing AI Search & GHCP MCP
+- [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): Testing AI Search & OpenWebUI MCP

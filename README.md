@@ -83,15 +83,6 @@ Use internal knowledge sources with AI agents using MCP with Azure.
 4. In the end you can test the inference with your own query or example queries.
 5. Done!
 
-## MCP
-
-1. Navigate to [`azure-ai-search-mcp`](./azure-ai-search-mcp/), this will now be your main directory.
-2. Install dependencies with uv:
-
-```bash
-uv sync
-```
-
 ### Run the MCP server
 
 You must run these from the `azure-ai-search-mcp` directory for the scripts to work.
@@ -161,8 +152,90 @@ uv run python main.py --transport sse --port 9090
 > [!TIP]
 > For more details on the MCP server (configuration, field exclusion, troubleshooting, etc.), see the [MCP server README](./azure-ai-search-mcp/README.md).
 
+### OpenWebUI MCP setup
+
+First we need to setup OpenWebUI
+
+1. Install with uv + python
+
+```powershell
+$env:DATA_DIR="C:\open-webui\data"; uvx --python 3.11 open-webui@latest serve
+```
+
+2. Open on `localhost:8080`
+3. Create an admin account.
+4. Click on your profile (bottom left)
+5. Click on `Admin Panel`
+6. In top nav bar, click on `Settings`
+7. Go to `Connections`, delete default OpenAI connection and disable ollama connection.
+8. Click on plus icon next to `Manage OpenAI API Connections`
+9. From `.env`, Use your `AZURE_OPENAI_INFERENCE` URL for `API base URL` (IMPORTANT: WITHOUT TRAILING SLASH AT THE END!)
+10. From `.env` copy your `AZURE_OPENAI_API_KEY`and paste it next to `Bearer` in `Auth`.
+11. Ensure `Provider Type` is NOT `Azure OpenAI`, if it is, click on it to switch it to `OpenAI`
+12. Model ID should be `Mistral-Large-3`
+13. Hit `Save`
+
+## MCP
+
+1. Navigate to [`azure-ai-search-mcp`](./azure-ai-search-mcp/), this will now be your main directory.
+2. Install dependencies with uv:
+
+```bash
+uv sync
+```
+
+OpenWebUI doesn't support MCP's stdio transport natively. We use [`mcpo`](https://pypi.org/project/mcpo/) to bridge the MCP server to an OpenAPI endpoint that OpenWebUI can consume.
+
+#### Prerequisites
+
+```bash
+pip install mcpo
+```
+
+#### Run the mcpo proxy
+
+From the `azure-ai-search-mcp` directory:
+
+Windows (PowerShell):
+
+```powershell
+.\scripts\openwebui.ps1                        # default port 8000, api-key "top-secret"
+.\scripts\openwebui.ps1 -Port 9000             # custom port
+.\scripts\openwebui.ps1 -ApiKey "my-secret"    # custom api key
+```
+
+macOS / Linux:
+
+```bash
+chmod +x scripts/openwebui.sh
+./scripts/openwebui.sh              # default port 8000, api-key "top-secret"
+./scripts/openwebui.sh 9000         # custom port
+./scripts/openwebui.sh 8000 my-key  # custom port + api key
+```
+
+#### Add to OpenWebUI
+
+1. Open OpenWebUI (default: `http://localhost:8080`)
+2. Open on `localhost:8080`
+3. Create an admin account. (if not already done)
+4. Click on your profile (bottom left)
+5. Click on `Admin Panel`
+6. In top nav bar, click on `Settings`
+7. Go to `External Tools`
+8. Add tool server by clicking on plus icon next to `Manage Tool Servers`
+9. Enter:
+   - **URL**: `http://localhost:8000/azure-ai-search`
+   - **API Key**: `top-secret` (or whatever you set when launching the script)
+   - Also add ID, name, description with anything you want.
+10. Click **Save**
+
+The MCP tools will now be available in your OpenWebUI chats. (Might need to enable it manually before submitting prompt)
+
+> [!NOTE]
+> The mcpo proxy and the GitHub Copilot stdio config are completely independent — they spawn separate processes and do not interfere with each other.
+
 ## Credits
 
-- [Aryan Shah (SE Intern)](https://github.com/aryxenv): RAG Pipeline + Azure Setup + Foundry Setup + MCP Server Setup + Github Copilot MCP setup & integration + Documentation
-- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Testing AI Search & MCP
-- [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): OpenWebUI MCP setup & integration
+- [Aryan Shah (SE Intern)](https://github.com/aryxenv): RAG Pipeline + Azure Setup + Foundry Setup + MCP Server Setup + Github Copilot MCP setup & integration + OpenWebUI MCP setup & integration + Documentation
+- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Testing AI Search & GHCP MCP
+- [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): Testing AI Search & OpenWebUI MCP
