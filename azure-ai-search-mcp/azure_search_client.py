@@ -24,7 +24,7 @@ def get_search_client() -> SearchClient:
 
 def get_excluded_fields() -> set[str]:
     """Get set of fields to exclude from search results."""
-    excluded = os.getenv("AZURE_SEARCH_EXCLUDE_FIELDS", "content,content_vector")
+    excluded = os.getenv("AZURE_SEARCH_EXCLUDE_FIELDS", "contentVector")
     return set(field.strip() for field in excluded.split(","))
 
 
@@ -43,7 +43,7 @@ def format_search_results(results, excluded_fields: set[str]) -> list[dict]:
 
 
 def format_fetch_results(doc: dict) -> dict:
-    """Format fetch document results (always exclude content and content_vector)."""
-    # fetch_document always excludes only content and content_vector
-    always_excluded = {"content", "content_vector"}
+    """Format fetch document results (always exclude contentVector)."""
+    # fetch_document always excludes only contentVector
+    always_excluded = {"contentVector"}
     return filter_document(doc, always_excluded)

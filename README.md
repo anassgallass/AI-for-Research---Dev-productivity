@@ -12,12 +12,14 @@ Use internal knowledge sources with AI agents using MCP with Azure.
 ## Pipeline
 
 ### Setup
+
 1. Copy [`.env.example`](./.env.example) and paste it in the same directory.
 2. Rename the **copied** `.env.example` to `.env`
 3. Open [Azure Portal](https://portal.azure.com)
-3. Create Azure RG called `ai_for_research`
+4. Create Azure RG called `ai_for_research`
 
 ### Azure AI Search
+
 1. Create AI Search resource on Azure portal called `ai-for-research-search`. (IMPORTANT: USE FREE PRICING TIER, recommended region: `swedencentral`)
 2. In AI Search, go to `Search Management` > `Indexes`
 3. Click on `Add Index` > `Add Index (JSON)`, this will open a sidebar where you can enter JSON config.
@@ -63,7 +65,7 @@ Use internal knowledge sources with AI agents using MCP with Azure.
 6. In your `.env` set `AZURE_OPENAI_ENDPOINT` as `https://ai-for-research-foundry-resource.cognitiveservices.azure.com`
 7. Done!
 
-#### For Inference (Mistral 3 Large) 
+#### For Inference (Mistral 3 Large)
 
 1. In top nav click on `Discover`
 2. In the left pane, click on `Models`
@@ -94,36 +96,73 @@ uv sync
 
 You must run these from the `azure-ai-search-mcp` directory for the scripts to work.
 
+The server supports two transport modes:
+
+- **stdio** (default): For use with GitHub Copilot, Claude Desktop, and other MCP clients
+- **sse**: For HTTP-based streaming (development / web clients via MCP Inspector)
+
 **Option A: Use the scripts**
 
-```powershell
-# Dev server
-./scripts/dev_server.ps1
+Windows (PowerShell):
 
-# Prod server
-./scripts/prod_server.ps1
+```powershell
+# Dev server (SSE + MCP Inspector at http://localhost:6274)
+.\scripts\dev.ps1              # default port 8080
+.\scripts\dev.ps1 -Port 9090   # custom port
+
+# Prod server (stdio)
+.\scripts\prod.ps1
 ```
 
-**Option B: Run directly with uv**
+macOS / Linux:
 
 ```bash
-# Dev mode
-uv run mcp dev main.py # add flag `--env-file ../.env` between `run` and `mcp` for env file handling, but currently buggy (not fixed yet)
+# Dev server (SSE + MCP Inspector at http://localhost:6274)
+chmod +x scripts/dev.sh
+./scripts/dev.sh            # default port 8080
+./scripts/dev.sh 9090       # custom port
 
-# Prod mode
-uv run mcp run main.py # add flag `--env-file ../.env` between `run` and `mcp` for env file handling, but currently buggy (not fixed yet)
+# Prod server (stdio)
+chmod +x scripts/prod.sh
+./scripts/prod.sh
 ```
+
+**Option B: Run directly**
+
+```bash
+# stdio mode (default, used by GitHub Copilot / Claude Desktop)
+uv run python main.py
+
+# SSE mode (for MCP Inspector / web clients)
+uv run python main.py --transport sse
+uv run python main.py --transport sse --port 9090
+```
+
+### Available Tools
+
+| Tool              | Description                                                     |
+| ----------------- | --------------------------------------------------------------- |
+| `semantic_search` | AI-powered semantic search that understands context and meaning |
+| `hybrid_search`   | Combines full-text and vector search for balanced results       |
+| `text_search`     | Traditional keyword-based text search                           |
+| `filtered_search` | Search with OData filter expressions to narrow results          |
+| `fetch_document`  | Retrieve a specific document by its unique ID                   |
 
 ### GitHub Copilot MCP setup
 
-1. No setup needed, already available in [`.vscode/mcp.json`](./.vscode/mcp.json).
-2. Just click on `Start Server` and now Github Copilot can use the MCP server in the chat. (Note: currently not working due to an unresolved bug)
+1. Go to [`./.vscode/mcp.json`](./.vscode/mcp.json)
+2. Click on `Start Server`
+3. You will be prompted to enter your Azure AI Search endpoint, API key, and index name — make sure these are already set up following the instructions above.
+4. GitHub Copilot's **Agent mode** will auto-discover the tools. You can verify under **MCP: List Servers** in the Command Palette.
 
 > [!NOTE]
 > You may need to reload VS Code or the window so GitHub Copilot picks up the MCP server.
 
+> [!TIP]
+> For more details on the MCP server (configuration, field exclusion, troubleshooting, etc.), see the [MCP server README](./azure-ai-search-mcp/README.md).
+
 ## Credits
 
-- [Aryan Shah (SE Intern)](https://github.com/aryxenv): RAG Pipeline + Azure Setup + Foundry Setup + MCP Server Setup + Documentation
-- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Github MCP setup & integration
+- [Aryan Shah (SE Intern)](https://github.com/aryxenv): RAG Pipeline + Azure Setup + Foundry Setup + MCP Server Setup + Github Copilot MCP setup & integration + Documentation
+- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Testing AI Search & MCP
 - [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): OpenWebUI MCP setup & integration

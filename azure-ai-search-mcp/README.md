@@ -40,8 +40,8 @@ AZURE_SEARCH_API_KEY=your-api-key-here
 AZURE_SEARCH_INDEX_NAME=your-index-name
 
 # Optional: Comma-separated list of fields to exclude from search results
-# Default: content,content_vector
-AZURE_SEARCH_EXCLUDE_FIELDS=content,content_vector
+# Default: contentVector
+AZURE_SEARCH_EXCLUDE_FIELDS=contentVector
 ```
 
 ### Required Azure Resources
@@ -51,65 +51,124 @@ AZURE_SEARCH_EXCLUDE_FIELDS=content,content_vector
 3. **API Key**: Get the admin or query key from the Azure Portal
 
 Optional for enhanced semantic search:
+
 - **Semantic Configuration**: Enables Azure's semantic ranker (recommended but not required)
 - **Vectorizer**: Enables vector-based semantic search (works without semantic configuration)
 
-## Usage
+## Running the Server
 
-### Run the Server
+### Dev Mode (MCP Inspector)
 
-You can run the server using the provided scripts or directly with uv.
+Dev mode launches the **MCP Inspector** — a browser-based UI that lets you invoke each tool interactively and inspect results. Great for testing and debugging.
 
-**Option A: Use the scripts**
+**Windows (PowerShell):**
 
 ```powershell
-# Dev server
-./scripts/dev_server.ps1
-
-# Prod server
-./scripts/prod_server.ps1
+.\scripts\dev.ps1              # default SSE port 8080
+.\scripts\dev.ps1 -Port 9090   # custom port
 ```
 
-**Option B: Run directly with uv**
+**macOS / Linux:**
 
 ```bash
-# Dev mode
-uv run mcp dev main.py
-
-# Prod mode
-uv run mcp run main.py
+chmod +x scripts/dev.sh
+./scripts/dev.sh            # default SSE port 8080
+./scripts/dev.sh 9090       # custom port
 ```
 
-The server will listen on stdio and communicate via the Model Context Protocol.
+The Inspector will open at **http://localhost:6274**.
 
-### GitHub Copilot MCP setup
+### Prod Mode (stdio)
 
-To use this server with GitHub Copilot in VS Code, add the following to your `.vscode/mcp.json` configuration in the workspace root:
+Prod mode runs the server over **stdio**, which is the transport expected by GitHub Copilot, Claude Desktop, and most MCP clients.
 
-```json
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\prod.ps1
+```
+
+**macOS / Linux:**
+
+```bash
+chmod +x scripts/prod.sh
+./scripts/prod.sh
+```
+
+You can also run directly:
+
+```bash
+uv run python main.py                    # stdio (default)
+uv run python main.py --transport sse    # SSE mode
+uv run python main.py --transport sse --port 9090
+```
+
+## GitHub Copilot Integration
+
+This server can be used as a **custom MCP server** in GitHub Copilot (VS Code).
+
+### Option 1 — Workspace config (recommended)
+
+A ready-to-use config is provided at `.vscode/mcp.json`. Open it and fill in your Azure credentials when prompted, **or** hardcode environment values:
+
+```jsonc
+// .vscode/mcp.json
 {
-	"servers": {
-		"azure-ai-search": {
-			"type": "stdio",
-			"command": "uv",
-			"args": [
-				"run",
-				"--env-file",
-				".env",
-				"mcp",
-				"run",
-				"azure-ai-search-mcp/main.py"
-			],
-            "cwd": "${workspaceFolder}"
-		}
-	},
-	"inputs": []
+  "servers": {
+    "azure-ai-search": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${workspaceFolder}/azure-ai-search-mcp",
+        "python",
+        "main.py",
+        "--transport",
+        "stdio",
+      ],
+      "env": {
+        "AZURE_SEARCH_ENDPOINT": "https://your-service.search.windows.net",
+        "AZURE_SEARCH_API_KEY": "your-api-key",
+        "AZURE_SEARCH_INDEX_NAME": "your-index-name",
+      },
+    },
+  },
 }
 ```
 
-After updating the configuration, reload VS Code or the window so GitHub Copilot picks up the MCP server.
+### Option 2 — User-level settings
 
-Ensure the `.vscode` directory exists in your workspace root.
+Add the server to your VS Code **User Settings** (`settings.json`):
+
+```jsonc
+{
+  "mcp": {
+    "servers": {
+      "azure-ai-search": {
+        "type": "stdio",
+        "command": "uv",
+        "args": [
+          "run",
+          "--directory",
+          "/absolute/path/to/azure-ai-search-mcp",
+          "python",
+          "main.py",
+          "--transport",
+          "stdio",
+        ],
+        "env": {
+          "AZURE_SEARCH_ENDPOINT": "https://your-service.search.windows.net",
+          "AZURE_SEARCH_API_KEY": "your-api-key",
+          "AZURE_SEARCH_INDEX_NAME": "your-index-name",
+        },
+      },
+    },
+  },
+}
+```
+
+After configuring, Copilot's **Agent mode** (Chat panel) will auto-discover the tools (`semantic_search`, `hybrid_search`, `text_search`, `filtered_search`, `fetch_document`). You can verify under **MCP: List Servers** in the Command Palette.
 
 ## Available Tools
 
@@ -118,10 +177,12 @@ Ensure the `.vscode` directory exists in your workspace root.
 Performs AI-powered semantic search that understands context and meaning. Works with or without semantic configuration - will use vectorizer if semantic configuration is not available.
 
 **Parameters:**
+
 - `query` (string, required): The search query
 - `top` (number, optional): Maximum results to return (default: 30)
 
 **Example:**
+
 ```json
 {
   "query": "machine learning algorithms",
@@ -134,10 +195,12 @@ Performs AI-powered semantic search that understands context and meaning. Works 
 Combines full-text and vector search for balanced results.
 
 **Parameters:**
+
 - `query` (string, required): The search query
 - `top` (number, optional): Maximum results to return (default: 30)
 
 **Example:**
+
 ```json
 {
   "query": "artificial intelligence trends",
@@ -150,10 +213,12 @@ Combines full-text and vector search for balanced results.
 Traditional keyword-based text search.
 
 **Parameters:**
+
 - `query` (string, required): The search query
 - `top` (number, optional): Maximum results to return (default: 30)
 
 **Example:**
+
 ```json
 {
   "query": "data science",
@@ -166,11 +231,13 @@ Traditional keyword-based text search.
 Search with OData filter expressions to narrow results.
 
 **Parameters:**
+
 - `query` (string, required): The search query
 - `filter` (string, required): OData filter expression
 - `top` (number, optional): Maximum results to return (default: 30)
 
 **Example:**
+
 ```json
 {
   "query": "technology",
@@ -184,9 +251,11 @@ Search with OData filter expressions to narrow results.
 Retrieve a specific document by its unique ID. Returns the complete document with all fields.
 
 **Parameters:**
+
 - `document_id` (string, required): The document's unique identifier
 
 **Example:**
+
 ```json
 {
   "document_id": "doc-12345"
@@ -195,10 +264,10 @@ Retrieve a specific document by its unique ID. Returns the complete document wit
 
 ## Field Exclusion
 
-- **Search tools** (`semantic_search`, `hybrid_search`, `text_search`, `filtered_search`): Return document summaries without fields specified in `AZURE_SEARCH_EXCLUDE_FIELDS` environment variable (default: `content`, `content_vector`)
-- **Fetch document**: Always returns full document with only `content` and `content_vector` fields excluded
+- **Search tools** (`semantic_search`, `hybrid_search`, `text_search`, `filtered_search`): Return document summaries without fields specified in `AZURE_SEARCH_EXCLUDE_FIELDS` environment variable (default: `contentVector`)
+- **Fetch document**: Always returns full document with only `contentVector` fields excluded
 
-You can customize which fields are excluded via the `AZURE_SEARCH_EXCLUDE_FIELDS` environment variable. The `fetch_document` tool always excludes only `content` and `content_vector` for security.
+You can customize which fields are excluded via the `AZURE_SEARCH_EXCLUDE_FIELDS` environment variable. The `fetch_document` tool always excludes only `contentVector`.
 
 ## Security Notes
 
@@ -207,13 +276,14 @@ You can customize which fields are excluded via the `AZURE_SEARCH_EXCLUDE_FIELDS
 - **Access Control**: Use Azure RBAC and query keys (not admin keys) in production
 - **Rate Limiting**: Be aware of Azure Search service tier limits
 - **Field Exclusion**: Use `AZURE_SEARCH_EXCLUDE_FIELDS` to prevent sensitive data from being returned in search results
-- **Data Privacy**: The `content` and `content_vector` fields are always excluded from search results by default
+- **Data Privacy**: The `contentVector` fields are always excluded from search results by default
 
 ## Troubleshooting
 
 ### "Missing required environment variables"
 
 Ensure all three environment variables are set:
+
 - `AZURE_SEARCH_ENDPOINT`
 - `AZURE_SEARCH_API_KEY`
 - `AZURE_SEARCH_INDEX_NAME`
@@ -221,6 +291,7 @@ Ensure all three environment variables are set:
 ### Semantic search configuration
 
 Semantic search works with or without explicit semantic configuration:
+
 - **With semantic configuration**: Uses Azure's semantic ranker for best results
 - **Without semantic configuration**: Falls back to vector search if vectorizer is configured, otherwise uses standard search
 - You don't need semantic configuration if you have a vectorizer configured in your index
@@ -240,6 +311,11 @@ azure-ai-search-mcp/
 ├── .env.example               # Example environment variables
 ├── .python-version            # Python version specification
 ├── azure_search_client.py      # Azure Search client utilities
+├── scripts/
+│   ├── dev.ps1                # Dev mode launcher (Windows)
+│   ├── dev.sh                 # Dev mode launcher (macOS/Linux)
+│   ├── prod.ps1               # Prod mode launcher (Windows)
+│   └── prod.sh                # Prod mode launcher (macOS/Linux)
 ├── tools/
 │   ├── __init__.py
 │   ├── semantic_search.py      # Semantic search tool
@@ -256,9 +332,8 @@ azure-ai-search-mcp/
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 - [Azure SDK for Python](https://docs.microsoft.com/python/azure/)
 
-
 ## Credits
 
-- [Aryan Shah (SE Intern)](https://github.com/aryxenv): MCP Server Setup + Documentation
-- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Github MCP setup & integration
+- [Aryan Shah (SE Intern)](https://github.com/aryxenv): MCP Server Setup + Github Copilot MCP setup & integration + Documentation
+- [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Testing AI Search & MCP
 - [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): OpenWebUI MCP setup & integration

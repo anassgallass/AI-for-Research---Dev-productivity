@@ -2,8 +2,18 @@
 
 This server provides semantic search, hybrid search, text search, filtered search,
 and document retrieval tools for AI agents using Azure AI Search.
+
+Supports two transport modes:
+  - stdio  (default): For use with GitHub Copilot, Claude Desktop, and other MCP clients
+  - sse   : For HTTP-based streaming (development / web clients)
+
+Usage:
+  python main.py              # stdio mode (default)
+  python main.py --transport stdio
+  python main.py --transport sse --port 8080
 """
 
+import argparse
 import os
 import json
 import sys
@@ -20,8 +30,9 @@ from tools import (
     fetch_document as tool_fetch_document,
 )
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from .env in current dir and parent dir
+load_dotenv()                          # ./azure-ai-search-mcp/.env
+load_dotenv(dotenv_path="../.env")     # workspace root .env
 
 # Validate env vars before starting
 required_vars = [
@@ -83,6 +94,29 @@ async def fetch_document(document_id: str) -> str:
     result = tool_fetch_document(document_id=document_id)
     return json.dumps(result)
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Azure AI Search MCP Server")
+    parser.add_argument(
+        "--transport",
+        choices=["stdio", "sse"],
+        default="stdio",
+        help="Transport protocol (default: stdio)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8080,
+        help="Port for SSE transport (default: 8080)",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    # fastmcp handles the running logic automatically
-    server.run()
+    args = parse_args()
+
+    if args.transport == "sse":
+        # SSE mode – useful for development with MCP Inspector or web clients
+        server.run(transport="sse", port=args.port)
+    else:
+        # stdio mode – used by GitHub Copilot, Claude Desktop, etc.
+        server.run(transport="stdio")

@@ -6,7 +6,7 @@ from azure_search_client import get_search_client, format_fetch_results
 def fetch_document(document_id: str) -> dict:
     """
     Retrieve a specific document by its unique ID from Azure Search.
-    Returns the complete document with all fields (excludes only content and content_vector).
+    Returns the complete document with all fields (excludes only contentVector).
     
     Args:
         document_id: The document's unique identifier

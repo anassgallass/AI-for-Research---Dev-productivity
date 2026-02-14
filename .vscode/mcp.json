@@ -1,18 +1,42 @@
 {
-	"servers": {
-		"azure-ai-search": {
-			"type": "stdio",
-			"command": "uv",
-			"args": [
-				"run",
-				"--env-file",
-				".env",
-				"mcp",
-				"run",
-				"azure-ai-search-mcp/main.py"
-			],
-            "cwd": "${workspaceFolder}"
-		}
-	},
-	"inputs": []
+  "servers": {
+    "azure-ai-search": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${workspaceFolder}/azure-ai-search-mcp",
+        "python",
+        "main.py",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "AZURE_SEARCH_ENDPOINT": "${input:azureSearchEndpoint}",
+        "AZURE_SEARCH_API_KEY": "${input:azureSearchApiKey}",
+        "AZURE_SEARCH_INDEX_NAME": "${input:azureSearchIndexName}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "azureSearchEndpoint",
+      "type": "promptString",
+      "description": "Azure AI Search endpoint URL",
+      "default": ""
+    },
+    {
+      "id": "azureSearchApiKey",
+      "type": "promptString",
+      "description": "Azure AI Search API key",
+      "password": true
+    },
+    {
+      "id": "azureSearchIndexName",
+      "type": "promptString",
+      "description": "Azure AI Search index name",
+      "default": ""
+    }
+  ]
 }
