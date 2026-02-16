@@ -1,0 +1,26 @@
+# Azure deployment artifacts (handled separately)
+azure/
+
+# Virtual environments
+.venv/
+__pycache__/
+tools/__pycache__/
+
+# Env files (secrets injected via Container App config)
+.env
+.env.*
+!.env.example
+
+# Dev / IDE
+.vscode/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs & scripts not needed at runtime
+README.md
+scripts/
+mcpo-config.json
