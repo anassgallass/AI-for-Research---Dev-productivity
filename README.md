@@ -237,6 +237,9 @@ The MCP tools will now be available in your OpenWebUI chats (you may need to ena
 
 The MCP server can be deployed to [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/) for remote access via streamable-http — no local server required.
 
+> [!IMPORTANT]
+> Must have Azure CLI installed and be logged in!
+
 ```powershell
 # From the azure-ai-search-mcp directory (reads secrets from ../.env)
 .\azure\deploy.ps1
@@ -248,6 +251,6 @@ See the full guide: [`azure-ai-search-mcp/azure/README.md`](./azure-ai-search-mc
 
 ## Credits
 
-- [Aryan Shah (SE Intern)](https://github.com/aryxenv): RAG Pipeline + Azure Setup + Foundry Setup + MCP Server Setup + Github Copilot MCP setup & integration + OpenWebUI MCP setup & integration + Documentation
+- [Aryan Shah (SE Intern)](https://github.com/aryxenv): RAG Pipeline + Azure Setup + Foundry Setup + MCP Server Setup + Github Copilot MCP setup & integration + OpenWebUI MCP setup & integration + MCP Deployment + Documentation
 - [Anass Gallass (SSP Intern)](https://github.com/anassgallass): Testing AI Search & GHCP MCP
 - [Bertille Mathieu (SE Intern)](https://github.com/bertillessec): Testing AI Search & OpenWebUI MCP

@@ -142,3 +142,7 @@ The Container App scales from 0 to 3 replicas based on HTTP concurrency (50 conc
 ```bash
 az group delete --name ai_for_research --yes --no-wait
 ```
+
+## Credits
+
+- Aryan through Claude Opus 4.6 on GHCP
